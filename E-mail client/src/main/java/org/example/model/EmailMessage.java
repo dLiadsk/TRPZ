@@ -18,4 +18,8 @@ public class EmailMessage {
     private String body;  // Тіло повідомлення
     private List<Attachment> attachments;  // Список вкладень
     private Status emailStatus;
+    public void saveDraft(EmailMessage draft) {
+        // Зберегти чернетку у локальну папку або базу даних
+        System.out.println("Draft saved: " + draft.getSubject());
+    }
 }

@@ -1,18 +1,23 @@
 package org.example.model;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import org.example.model.common.ProtocolType;
 
+import java.io.IOException;
+import java.net.InetSocketAddress;
+import java.net.Socket;
 import java.util.ArrayList;
 import java.util.List;
 
 @Data
 @RequiredArgsConstructor
+@AllArgsConstructor
 public class ServerConnection {
     private String host;
     private int port;
-    private ProtocolType protocol;  // Протокол (IMAP, POP3, SMTP)
+    private ProtocolType protocol;
     // Підключення до сервера
     public boolean connect() {
         // Логіка підключення до сервера з урахуванням протоколу та безпеки
@@ -27,17 +32,6 @@ public class ServerConnection {
         // Логіка для відключення
     }
 
-    // Відправлення повідомлення через SMTP
-    public boolean sendMessage(EmailMessage message) {
-        // Логіка відправлення повідомлення через SMTP сервер
-        System.out.println("Sending message: " + message.getSubject() + " via " + protocol + " server.");
-        return true;  // Псевдопідключення для прикладу
-    }
 
-    // Отримання повідомлень через IMAP або POP3
-    public List<EmailMessage> retrieveMessages(Folder folder) {
-        // Логіка для отримання повідомлень з поштової скриньки
-        System.out.println("Retrieving messages from folder: " + folder.getName() + " using " + protocol + " protocol.");
-        return new ArrayList<>();  // Псевдопідключення для прикладу
-    }
+
 }
