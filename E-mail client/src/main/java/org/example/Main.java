@@ -11,6 +11,7 @@ import org.example.repository.UserRepository;
 import org.example.service.EmailAccountService;
 
 import java.sql.SQLException;
+import java.util.ArrayList;
 
 
 public class Main extends Application {
@@ -30,11 +31,9 @@ public class Main extends Application {
 //        } catch (SQLException e) {
 //            throw new RuntimeException(e);
 //        }
-        try {
-            emailAccountService.addEmailAccount(new User(), new EmailAccount("qwertyeee@ukr.net", "O4oiRBZT1bj5V8my"));
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
+        EmailAccount emailAccount = new EmailAccount.EmailAccountBuilder("qwertyeee@ukr.net", "O4oiRBZT1bj5V8my").setAutoconfig(true).build();
+        emailAccountService.authorizeEmail(emailAccount);
+
     }
 
     @Override

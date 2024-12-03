@@ -1,9 +1,10 @@
 package org.example.model;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
 
-import java.util.Date;
+import java.util.ArrayList;
 import java.util.List;
 
 @Data
@@ -14,4 +15,8 @@ public class User {
     private List<EmailAccount> emailAccounts;
     private String password;
     private String phoneNumber;
+
+    public User(ArrayList<EmailAccount> emailAccounts) {
+        this.emailAccounts = emailAccounts;
+    }
 }

@@ -6,6 +6,7 @@ module com.example.demo {
     requires static lombok;
     requires java.sql;
     requires  jakarta.mail;
+    requires org.slf4j;
 
     opens org.example to javafx.fxml;
     exports org.example;
