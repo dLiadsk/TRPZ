@@ -1,9 +1,7 @@
 package org.example.model;
 
 import jakarta.mail.Session;
-import lombok.Data;
 import lombok.Getter;
-import lombok.RequiredArgsConstructor;
 import org.example.model.common.ProtocolType;
 
 @Getter
@@ -69,12 +67,10 @@ public class EmailAccount {
             this.outgoingServer = serverConnection;
             return this;
         }
-
-        public EmailAccountBuilder setOIncomingServerSession(Session session){
+        public EmailAccountBuilder setIncomingServerSession(Session session){
             this.incomingServerSession = session;
             return this;
         }
-
         public EmailAccountBuilder setOutgoingServerSession(Session session){
             this.outgoingServerSession = session;
             return this;
@@ -97,7 +93,6 @@ public class EmailAccount {
                 default -> System.out.println("Автонастройка недоступна для домену: " + domain);
             }
         }
-
         public EmailAccount build(){
             return new EmailAccount(this);
         }

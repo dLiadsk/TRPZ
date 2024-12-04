@@ -79,7 +79,7 @@ public class EmailAccountService {
         EmailAccount authorizedEmailAccount = new EmailAccount.EmailAccountBuilder(emailAccount.getEmailAddress(), emailAccount.getPassword())
                 .setId(emailAccount.getId())
                 .setAutoconfig(true)
-                .setOIncomingServerSession(incomingServerSession)
+                .setIncomingServerSession(incomingServerSession)
                 .setOutgoingServerSession(outgoingServerSession)
                 .build();
 
