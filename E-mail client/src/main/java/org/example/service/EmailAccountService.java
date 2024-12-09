@@ -16,6 +16,7 @@ import java.util.Objects;
 import java.util.Properties;
 
 import java.sql.SQLException;
+
 @Slf4j
 public class EmailAccountService {
     private final EmailAccountRepository emailAccountRepository;
