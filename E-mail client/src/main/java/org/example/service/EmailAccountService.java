@@ -4,6 +4,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.example.model.EmailAccount;
 import org.example.model.ServerConnection;
 import org.example.model.User;
+import org.example.model.handler.EmailProtocolHandler;
+import org.example.model.handler.IncomingServerHandler;
+import org.example.model.handler.OutgoingServerHandler;
 import org.example.repository.EmailAccountRepository;
 
 import jakarta.mail.*;
@@ -64,72 +67,32 @@ public class EmailAccountService {
     }
 
     public EmailAccount authorizeEmail(EmailAccount emailAccount) {
-        // Перевірка авторизації на вхідному сервері (IMAP)
-        Session incomingServerSession = connectIncomingServer(emailAccount.getIncomingServer(), emailAccount);
-        if (incomingServerSession == null) {
+        EmailProtocolHandler incomingHandler = new IncomingServerHandler();
+        Session incomingSession = incomingHandler.authorize(emailAccount, emailAccount.getIncomingServer());
+
+        if (incomingSession == null) {
             log.warn("Authorization failed on incoming server for: " + emailAccount.getEmailAddress());
             return null;
         }
-        // Перевірка авторизації на вихідному сервері (SMTP)
-        Session outgoingServerSession = connectOutgoingServer(emailAccount.getOutgoingServer(), emailAccount);
-        if (outgoingServerSession == null) {
+
+        EmailProtocolHandler outgoingHandler = new OutgoingServerHandler();
+        Session outgoingSession = outgoingHandler.authorize(emailAccount, emailAccount.getOutgoingServer());
+
+        if (outgoingSession == null) {
             log.warn("Authorization failed on outgoing server for: " + emailAccount.getEmailAddress());
             return null;
         }
+
         EmailAccount authorizedEmailAccount = new EmailAccount.EmailAccountBuilder(emailAccount.getEmailAddress(), emailAccount.getPassword())
                 .setId(emailAccount.getId())
                 .setAutoconfig(true)
-                .setIncomingServerSession(incomingServerSession)
-                .setOutgoingServerSession(outgoingServerSession)
+                .setIncomingServerSession(incomingSession)
+                .setOutgoingServerSession(outgoingSession)
                 .build();
 
         log.info("Authorization successful for: " + emailAccount.getEmailAddress());
         return authorizedEmailAccount;
     }
 
-    private Session connectIncomingServer(ServerConnection serverConnection, EmailAccount emailAccount) {
-        Session session = createSession(serverConnection, emailAccount, false);
-        try (Store store = session.getStore(serverConnection.getProtocol().name().toLowerCase())) {
-            store.connect(serverConnection.getHost(), emailAccount.getEmailAddress(), emailAccount.getPassword());
-            log.info("Incoming server authorization successful: " + serverConnection.getHost());
-            return session;
-        } catch (MessagingException e) {
-            log.warn("Incoming server authorization failed: " + e.getMessage());
-            return null;
-        }
-    }
-
-    private Session connectOutgoingServer(ServerConnection serverConnection, EmailAccount emailAccount) {
-
-        Session session = createSession(serverConnection, emailAccount, true);
-
-        try {
-            Transport transport = session.getTransport("smtp");
-            transport.connect();
-            transport.close();
-            log.info("Outgoing server authorization successful: " + serverConnection.getHost());
-            return session;
-        } catch (MessagingException e) {
-            log.warn("Outgoing server authorization failed: " + e.getMessage());
-            return null;
-        }
-    }
-    private Session createSession(ServerConnection serverConnection, EmailAccount emailAccount, boolean isSmtp) {
-        Properties properties = new Properties();
-        properties.put("mail." + serverConnection.getProtocol().name().toLowerCase() + ".host", serverConnection.getHost());
-        properties.put("mail." + serverConnection.getProtocol().name().toLowerCase() + ".port", serverConnection.getPort());
-        properties.put("mail." + serverConnection.getProtocol().name().toLowerCase() + ".ssl.enable", "true");
-        if (isSmtp){
-            properties.put("mail.smtp.auth", "true");
-            properties.put("mail.smtp.starttls.enable", "true");
-        }
-        System.out.println(properties);
-        return Session.getInstance(properties, new Authenticator() {
-            @Override
-            protected PasswordAuthentication getPasswordAuthentication() {
-                return new PasswordAuthentication(emailAccount.getEmailAddress(), emailAccount.getPassword());
-            }
-        });
-    }
 
 }

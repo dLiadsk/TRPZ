@@ -27,9 +27,9 @@ public class Main extends Application {
     public static void main(String[] args) throws SQLException {
 //        DbConnection dbConnection = DbConnection.getInstance();
 //        launch();
-//        testEmailAccount();
-        List<EmailMessage> emailMessages = new EmailFilterService().emailUnreadMessageDateFilter(emailMessages(), LocalDate.of(2023, 11, 1), LocalDate.of(2023, 12, 31));
-        emailMessages.forEach(System.out::println);
+        testEmailAccount();
+//        List<EmailMessage> emailMessages = new EmailFilterService().emailUnreadMessageDateFilter(emailMessages(), LocalDate.of(2023, 11, 1), LocalDate.of(2023, 12, 31));
+//        emailMessages.forEach(System.out::println);
     }
 
     public static void testEmailAccount(){
