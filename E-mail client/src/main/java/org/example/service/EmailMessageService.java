@@ -13,6 +13,7 @@ import org.example.repository.EmailMessageRepository;
 import java.io.File;
 import java.io.IOException;
 import java.sql.SQLException;
+import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -93,7 +94,9 @@ public class EmailMessageService {
             }
 
             emailMessage.setSubject(message.getSubject());
-            emailMessage.setSentDate(message.getSentDate());
+            emailMessage.setSentDate(message.getSentDate().toInstant()
+                    .atZone(ZoneId.systemDefault())
+                    .toLocalDate());
             emailMessage.setBody(getTextFromMessage(message));
             emailMessage.setAttachments(getAttachmentsFromMessage(message));
             emailMessages.add(emailMessage);

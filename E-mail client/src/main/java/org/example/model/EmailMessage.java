@@ -3,8 +3,10 @@ package org.example.model;
 import jakarta.mail.Flags;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
+import org.example.model.common.EmailStatus;
 
 import java.io.File;
+import java.time.LocalDate;
 import java.util.Date;
 import java.util.List;
 
@@ -15,10 +17,10 @@ public class EmailMessage {
     private String subject;  // Тема листа
     private String from;  // Відправник
     private List<String> to;  // Список одержувачів
-    private Date sentDate;  // Дата відправлення
+    private LocalDate sentDate;  // Дата відправлення
     private String body;  // Тіло повідомлення
     private List<File> attachments;  // Список вкладень
-    private Flags.Flag emailStatus;
+    private EmailStatus emailStatus;
 
     @Override
     public boolean equals(Object o) {

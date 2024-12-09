@@ -1,9 +1,8 @@
 package org.example.model;
 
 import jakarta.mail.Session;
-import lombok.Data;
 import lombok.Getter;
-import lombok.RequiredArgsConstructor;
+import org.example.model.common.EmailStatus;
 import org.example.model.common.ProtocolType;
 
 @Getter
@@ -18,6 +17,7 @@ public class EmailAccount {
 
     private Session outgoingServerSession;
     private Boolean autoconfig;
+
 
     private EmailAccount(EmailAccountBuilder emailAccountBuilder) {
         this.id = emailAccountBuilder.id;
@@ -70,7 +70,7 @@ public class EmailAccount {
             return this;
         }
 
-        public EmailAccountBuilder setOIncomingServerSession(Session session){
+        public EmailAccountBuilder setIncomingServerSession(Session session){
             this.incomingServerSession = session;
             return this;
         }

@@ -79,7 +79,7 @@ public class EmailAccountService {
         EmailAccount authorizedEmailAccount = new EmailAccount.EmailAccountBuilder(emailAccount.getEmailAddress(), emailAccount.getPassword())
                 .setId(emailAccount.getId())
                 .setAutoconfig(true)
-                .setOIncomingServerSession(incomingServerSession)
+                .setIncomingServerSession(incomingServerSession)
                 .setOutgoingServerSession(outgoingServerSession)
                 .build();
 
@@ -87,7 +87,6 @@ public class EmailAccountService {
         return authorizedEmailAccount;
     }
 
-    // Тестування підключення до вхідного сервера
     private Session connectIncomingServer(ServerConnection serverConnection, EmailAccount emailAccount) {
         Session session = createSession(serverConnection, emailAccount, false);
         try (Store store = session.getStore(serverConnection.getProtocol().name().toLowerCase())) {
@@ -100,7 +99,6 @@ public class EmailAccountService {
         }
     }
 
-    // Тестування підключення до вихідного сервера
     private Session connectOutgoingServer(ServerConnection serverConnection, EmailAccount emailAccount) {
 
         Session session = createSession(serverConnection, emailAccount, true);
