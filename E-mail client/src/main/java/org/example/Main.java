@@ -28,7 +28,8 @@ public class Main extends Application {
 //        DbConnection dbConnection = DbConnection.getInstance();
 //        launch();
 //        testEmailAccount();
-        List<EmailMessage> emailMessages = new EmailFilterService().emailUnreadMessageDateFilter(emailMessages(), LocalDate.of(2023, 11, 1), LocalDate.of(2023, 12, 31));
+        List<EmailMessage> emailMessages = new EmailFilterService()
+                .emailUnreadMessageDateFilter(emailMessages(), LocalDate.of(2023, 11, 1), LocalDate.of(2023, 12, 31));
         emailMessages.forEach(System.out::println);
     }
 
