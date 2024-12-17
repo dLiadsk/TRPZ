@@ -1,4 +1,4 @@
-package org.example.model.decorator;
+package org.example.service.decorator;
 
 import org.example.model.EmailMessage;
 

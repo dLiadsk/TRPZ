@@ -6,9 +6,7 @@ import javafx.scene.Scene;
 import javafx.stage.Stage;
 import org.example.model.EmailAccount;
 import org.example.model.EmailMessage;
-import org.example.model.User;
 import org.example.model.common.EmailStatus;
-import org.example.model.decorator.EmailFilter;
 import org.example.repository.EmailAccountRepository;
 import org.example.repository.UserRepository;
 import org.example.service.EmailAccountService;
@@ -27,9 +25,15 @@ public class Main extends Application {
     public static void main(String[] args) throws SQLException {
 //        DbConnection dbConnection = DbConnection.getInstance();
 //        launch();
-        testEmailAccount();
-//        List<EmailMessage> emailMessages = new EmailFilterService().emailUnreadMessageDateFilter(emailMessages(), LocalDate.of(2023, 11, 1), LocalDate.of(2023, 12, 31));
+//        testEmailAccount();
+//        List<EmailMessage> emailMessages = new EmailFilterService()
+//                .emailUnreadMessageDateFilter(emailMessages(), LocalDate.of(2023, 11, 1), LocalDate.of(2023, 12, 31));
 //        emailMessages.forEach(System.out::println);
+        EmailFilterService filterService = new EmailFilterService();
+        List<EmailMessage> messages = emailMessages();
+//        System.out.println(filterService.getMessageByStatus(messages, EmailStatus.UNREAD));
+//        System.out.println(filterService.getMessageBySender(messages, "manager@example.com"));
+//        System.out.println(filterService.getMessageBySubject(messages, "Робоча"));
     }
 
     public static void testEmailAccount(){
