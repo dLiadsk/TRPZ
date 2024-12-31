@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<AnchorPane prefHeight="600.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.appmodule.controller.user.UserLoginController">
+    <children>
+        <VBox alignment="CENTER" layoutX="275.0" layoutY="150.0" prefHeight="300.0" prefWidth="250.0" spacing="15">
+            <Label text="Login" styleClass="header-label" />
+            <TextField fx:id="usernameField" prefWidth="250.0" promptText="Enter your username" styleClass="input-field" />
+            <PasswordField fx:id="passwordField" prefWidth="250.0" promptText="Enter your password" styleClass="input-field" />
+            <Button onAction="#handleLogin" prefWidth="250.0" text="Login" styleClass="action-button" />
+            <Label fx:id="errorMessage" textFill="red" visible="false" styleClass="error-label" />
+            <Hyperlink onAction="#handleCreateAccount" text="Create an account" styleClass="hyperlink" />
+        </VBox>
+    </children>
+</AnchorPane>

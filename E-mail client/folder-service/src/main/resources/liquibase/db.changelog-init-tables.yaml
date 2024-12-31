@@ -1,0 +1,122 @@
+databaseChangeLog:
+  - changeSet:
+      id: 1
+      author: "user"
+      changes:
+
+        - createSequence:
+            sequenceName: folder_sequence
+            incrementBy: 50
+        - createTable:
+            tableName: folders
+            columns:
+              - column:
+                  name: id
+                  type: bigint
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: name
+                  type: varchar(255)
+                  constraints:
+                    unique: true
+                    nullable: false
+
+        - createSequence:
+            sequenceName: email_addresses_id_seq
+            incrementBy: 50
+        - createTable:
+            tableName: email_addresses
+            columns:
+              - column:
+                  name: id
+                  type: bigint
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: address
+                  type: varchar(255)
+                  constraints:
+                    unique: true
+                    nullable: false
+
+        - createSequence:
+            sequenceName: folder_email_addresses_id_seq
+            incrementBy: 50
+        - createTable:
+            tableName: folder_email_addresses
+            columns:
+              - column:
+                  name: id
+                  type: bigint
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: folder_id
+                  type: bigint
+                  constraints:
+                    nullable: false
+              - column:
+                  name: email_address_id
+                  type: bigint
+                  constraints:
+                    nullable: false
+        - addForeignKeyConstraint:
+            baseTableName: folder_email_addresses
+            baseColumnNames: folder_id
+            constraintName: fk_folder_email_addresses_folder_id
+            referencedTableName: folders
+            referencedColumnNames: id
+            onDelete: CASCADE
+        - addForeignKeyConstraint:
+            baseTableName: folder_email_addresses
+            baseColumnNames: email_address_id
+            constraintName: fk_folder_email_addresses_email_address_id
+            referencedTableName: email_addresses
+            referencedColumnNames: id
+            onDelete: CASCADE
+
+        - createSequence:
+            sequenceName: folder_email_seq
+            incrementBy: 50
+        - createTable:
+            tableName: folder_email_message
+            columns:
+              - column:
+                  name: id
+                  type: bigint
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: folder_email_id
+                  type: bigint
+                  constraints:
+                    nullable: false
+              - column:
+                  name: email_message_id
+                  type: varchar(255)
+                  constraints:
+                    nullable: false
+        - addForeignKeyConstraint:
+            baseTableName: folder_email_message
+            baseColumnNames: folder_email_id
+            constraintName: fk_folder_email_message_folder_email_id
+            referencedTableName: folder_email_addresses
+            referencedColumnNames: id
+            onDelete: CASCADE
+        - addForeignKeyConstraint:
+            baseTableName: folder_email_message
+            baseColumnNames: email_message_id
+            constraintName: fk_folder_email_message_email_message_id
+            referencedTableName: email_message
+            referencedColumnNames: message_id
+            onDelete: CASCADE
+

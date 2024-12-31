@@ -7,9 +7,19 @@
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
-        <module name="mail" />
+        <module name="app-module" />
         <module name="E-mail client" />
+        <module name="email-service" />
+        <module name="folder-service" />
+        <module name="attachment-service" />
+        <module name="filter-service" />
+        <module name="user-service" />
       </profile>
     </annotationProcessing>
+    <bytecodeTargetLevel>
+      <module name="client-app" target="17" />
+      <module name="gateway" target="17" />
+      <module name="mail" target="17" />
+    </bytecodeTargetLevel>
   </component>
 </project>

@@ -1,0 +1,32 @@
+databaseChangeLog:
+  - changeSet:
+      id: 2
+      author: "user"
+      changes:
+        - createSequence:
+            sequenceName: server_id_seq
+            incrementBy: 50
+        - createTable:
+            tableName: server_connection
+            columns:
+              - column:
+                  name: id
+                  type: BIGINT
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: host
+                  type: VARCHAR(255)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: port
+                  type: INT
+                  constraints:
+                    nullable: false
+              - column:
+                  name: protocol
+                  type: VARCHAR(50)
+                  constraints:
+                    nullable: false

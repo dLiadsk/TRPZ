@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Diagram>
+  <ID>JAVA</ID>
+  <OriginalElement />
+  <nodes>
+    <node x="688.2248105020121" y="49.525118859535894">org.example.service.interpreter.Expression</node>
+    <node x="1929.2248105020121" y="254.73872943782942">org.example.service.decorator.StatusFilter</node>
+    <node x="688.2248105020121" y="422.2812160210137">org.example.service.interpreter.OrFilter</node>
+    <node x="1401.9833078186489" y="167.31044980765753">org.example.service.decorator.BaseFilter</node>
+    <node x="1040.2248105020121" y="254.73872943782942">org.example.service.interpreter.SenderFilter</node>
+    <node x="1555.4014652426204" y="422.2812160210137">org.example.service.decorator.DateFilter</node>
+    <node x="1040.2248105020121" y="422.2812160210137">org.example.service.interpreter.StatusFilter</node>
+    <node x="688.2248105020121" y="167.31044980765753">org.example.service.interpreter.AndFilter</node>
+    <node x="1663.2248105020121" y="38.025118859535894">org.example.service.decorator.FilterDecorator</node>
+    <node x="1504.8097836683805" y="-68.26021208858575">org.example.service.decorator.EmailFilter</node>
+    <node x="221.72481050201213" y="5.025118859535894">org.example.model.handler.EmailProtocolHandler</node>
+    <node x="-215.32689883129427" y="264.1035708873909">org.example.model.handler.OutgoingServerHandler</node>
+    <node x="248.32275734163977" y="243.73872943782942">org.example.model.handler.IncomingServerHandler</node>
+  </nodes>
+  <notes />
+  <edges>
+    <edge source="org.example.service.decorator.FilterDecorator" target="org.example.service.decorator.EmailFilter" relationship="REALIZATION">
+      <point x="-216.0" y="-1.1885953588830489E-4" />
+      <point x="1720.8097836683805" y="76.525" />
+      <point x="-0.0" y="27.0" />
+    </edge>
+    <edge source="org.example.service.interpreter.AndFilter" target="org.example.service.interpreter.Expression" relationship="REALIZATION">
+      <point x="-0.0" y="-38.5" />
+      <point x="-0.0" y="27.0" />
+    </edge>
+    <edge source="org.example.service.interpreter.StatusFilter" target="org.example.service.interpreter.Expression" relationship="REALIZATION">
+      <point x="-144.5" y="-0.0" />
+      <point x="1022.7248105020121" y="460.7812160210137" />
+      <point x="1022.7248105020121" y="61.525000000000006" />
+      <point x="144.5" y="-15.000118859535888" />
+    </edge>
+    <edge source="org.example.service.decorator.DateFilter" target="org.example.service.decorator.FilterDecorator" relationship="GENERALIZATION">
+      <point x="216.0" y="-0.0" />
+      <point x="1879.2248105020121" y="460.7812160210137" />
+      <point x="-0.0" y="38.5" />
+    </edge>
+    <edge source="org.example.model.handler.IncomingServerHandler" target="org.example.model.handler.EmailProtocolHandler" relationship="GENERALIZATION">
+      <point x="2.4265836020731513E-4" y="-49.499729437829416" />
+      <point x="449.823" y="196.0" />
+      <point x="423.225" y="196.0" />
+      <point x="1.8949798788980843E-4" y="71.49988114046411" />
+    </edge>
+    <edge source="org.example.service.decorator.BaseFilter" target="org.example.service.decorator.EmailFilter" relationship="REALIZATION">
+      <point x="216.00018949798778" y="-1.1885953589541032E-4" />
+      <point x="1358.9078711985687" y="205.81033094812165" />
+      <point x="1358.9078711985687" y="-41.26033094812164" />
+      <point x="-215.99981050201222" y="-1.1885953589541032E-4" />
+    </edge>
+    <edge source="org.example.service.interpreter.SenderFilter" target="org.example.service.interpreter.Expression" relationship="REALIZATION">
+      <point x="-0.0" y="-38.5" />
+      <point x="1184.7248105020121" y="91.525" />
+      <point x="144.5" y="14.999881140464112" />
+    </edge>
+    <edge source="org.example.service.interpreter.OrFilter" target="org.example.service.interpreter.Expression" relationship="REALIZATION">
+      <point x="144.5" y="-0.0" />
+      <point x="994.7248105020121" y="460.7812160210137" />
+      <point x="994.7248105020121" y="76.525" />
+      <point x="144.5" y="-1.1885953588830489E-4" />
+    </edge>
+    <edge source="org.example.model.handler.OutgoingServerHandler" target="org.example.model.handler.EmailProtocolHandler" relationship="GENERALIZATION">
+      <point x="-1.0116870572574044E-4" y="-49.49957088739092" />
+      <point x="-13.826999999999998" y="196.0" />
+      <point x="423.225" y="196.0" />
+      <point x="1.8949798788980843E-4" y="71.49988114046411" />
+    </edge>
+    <edge source="org.example.service.decorator.StatusFilter" target="org.example.service.decorator.FilterDecorator" relationship="GENERALIZATION">
+      <point x="-208.5" y="-38.5" />
+      <point x="57.5" y="38.5" />
+    </edge>
+  </edges>
+  <settings layout="Hierarchic Compact" zoom="0.8057657657657658" showDependencies="false" x="1184.7248105020121" y="293.2387294378294" />
+  <SelectedNodes>
+    <node>org.example.service.interpreter.StatusFilter</node>
+  </SelectedNodes>
+  <Categories>
+    <Category>Constructors</Category>
+    <Category>Fields</Category>
+    <Category>Inner Classes</Category>
+    <Category>Methods</Category>
+    <Category>Properties</Category>
+  </Categories>
+  <SCOPE>All</SCOPE>
+  <VISIBILITY>private</VISIBILITY>
+</Diagram>
+

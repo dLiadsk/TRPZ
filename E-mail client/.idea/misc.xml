@@ -5,6 +5,12 @@
     <option name="originalFiles">
       <list>
         <option value="$PROJECT_DIR$/pom.xml" />
+        <option value="$PROJECT_DIR$/email-service/pom.xml" />
+        <option value="$PROJECT_DIR$/user-service/pom.xml" />
+        <option value="$PROJECT_DIR$/attachment-service/pom.xml" />
+        <option value="$PROJECT_DIR$/filter-service/pom.xml" />
+        <option value="$PROJECT_DIR$/app-module/pom.xml" />
+        <option value="$PROJECT_DIR$/user-service/folder-service/pom.xml" />
       </list>
     </option>
   </component>
