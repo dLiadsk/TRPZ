@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<BorderPane xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.appmodule.controller.email_account.AddEmailController">
+    <center>
+        <VBox alignment="CENTER" prefHeight="509.0" prefWidth="517.0" spacing="15" BorderPane.alignment="CENTER">
+            <padding>
+                <Insets bottom="20" left="20" right="20" top="20" />
+            </padding>
+
+            <!-- Email and Password Fields -->
+            <HBox alignment="CENTER" spacing="15">
+                <Label text="Email:" styleClass="input-label" />
+                <TextField fx:id="emailField" promptText="Enter your email" styleClass="input-field" />
+            </HBox>
+            <HBox alignment="CENTER" spacing="15">
+                <Label text="Password:" styleClass="input-label" />
+                <TextField fx:id="passwordField" promptText="Enter your password" styleClass="input-field" />
+            </HBox>
+
+            <!-- Autoconfiguration Checkbox -->
+            <CheckBox fx:id="autoconfigCheckbox" text="Autoconfigure Servers" selected="true" styleClass="checkbox" />
+
+            <!-- Incoming Server Fields -->
+            <VBox fx:id="incomingServerBox" alignment="CENTER" managed="false" spacing="15" visible="false">
+                <HBox alignment="CENTER" spacing="15">
+                    <Label text="Incoming protocol:" styleClass="input-label" />
+                    <TextField fx:id="incomingProtocolField" promptText="Enter incoming protocol" styleClass="input-field" />
+                </HBox>
+                <HBox alignment="CENTER" spacing="15">
+                    <Label text="Incoming Port:" styleClass="input-label" />
+                    <TextField fx:id="incomingPortField" promptText="Enter incoming port" styleClass="input-field" />
+                </HBox>
+            </VBox>
+
+            <!-- Outgoing Server Fields -->
+            <VBox fx:id="outgoingServerBox" alignment="CENTER" managed="false" spacing="15" visible="false">
+                <HBox alignment="CENTER" spacing="15">
+                    <Label text="Outgoing protocol:" styleClass="input-label" />
+                    <TextField fx:id="outgoingProtocolField" promptText="Enter outgoing protocol" styleClass="input-field" />
+                </HBox>
+                <HBox alignment="CENTER" spacing="15">
+                    <Label text="Outgoing Port:" styleClass="input-label" />
+                    <TextField fx:id="outgoingPortField" promptText="Enter outgoing port" styleClass="input-field" />
+                </HBox>
+            </VBox>
+
+            <!-- Error Message -->
+            <Label fx:id="errorMessage" textFill="red" visible="false" wrapText="true" styleClass="error-message" />
+
+            <!-- Buttons -->
+            <HBox alignment="CENTER" spacing="20">
+                <Button fx:id="saveButton" text="Save" onAction="#handleSave" styleClass="action-button success" />
+                <Button fx:id="cancelButton" text="Cancel" onAction="#handleCancel" styleClass="action-button cancel" />
+            </HBox>
+        </VBox>
+    </center>
+</BorderPane>

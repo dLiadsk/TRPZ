@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<BorderPane prefHeight="600.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.appmodule.controller.email_account.AccountDetailsController">
+    <top>
+        <HBox alignment="CENTER" spacing="10" style="-fx-background-color: #2a9df4; -fx-padding: 15;">
+            <Label fx:id="accountEmailLabel" text="Account Details" style="-fx-text-fill: white; -fx-font-size: 20; -fx-font-weight: bold;" />
+        </HBox>
+    </top>
+    <center>
+        <SplitPane orientation="HORIZONTAL" dividerPositions="0.3">
+            <VBox spacing="10" style="-fx-padding: 10; -fx-background-color: #f9f9f9;">
+                <Label text="Folders:" style="-fx-font-weight: bold; -fx-font-size: 16;" />
+                <ListView fx:id="folderListView" prefWidth="200.0" styleClass="input-field" />
+            </VBox>
+            <VBox spacing="10" style="-fx-padding: 10;">
+                <Label text="Messages:" style="-fx-font-weight: bold; -fx-font-size: 16;" />
+                <ListView fx:id="messageListView" prefHeight="400.0" styleClass="input-field" />
+            </VBox>
+        </SplitPane>
+    </center>
+    <bottom>
+        <HBox alignment="CENTER" spacing="20" style="-fx-background-color: #e0e0e0; -fx-padding: 15;">
+            <Button onAction="#handleBackToMain" text="Back" styleClass="action-button success" />
+            <Button onAction="#handleCreateFolder" text="Create Folder" styleClass="action-button warning" />
+        </HBox>
+    </bottom>
+</BorderPane>

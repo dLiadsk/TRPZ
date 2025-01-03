@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<BorderPane prefHeight="600.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.appmodule.controller.email_message.EmailDetailsController">
+    <top>
+        <HBox alignment="CENTER" style="-fx-background-color: #2a9df4; -fx-padding: 15;">
+            <Label text="Email Details" style="-fx-font-size: 20; -fx-font-weight: bold; -fx-text-fill: white;" />
+        </HBox>
+    </top>
+    <center>
+        <VBox spacing="20.0" style="-fx-padding: 20;">
+            <Label fx:id="emailSubjectLabel" style="-fx-font-size: 18; -fx-font-weight: bold;" />
+            <Label fx:id="emailSenderLabel" style="-fx-font-size: 16; -fx-text-fill: #555;" />
+            <TextArea fx:id="emailContentArea" editable="false" prefHeight="300.0" wrapText="true"
+                      style="-fx-font-size: 14; -fx-background-color: #f9f9f9; -fx-border-color: #ddd;" />
+            <Label text="Attachments:" style="-fx-font-size: 16; -fx-font-weight: bold;" />
+            <ListView fx:id="attachmentsListView" prefHeight="120.0"
+                      style="-fx-border-color: #ddd; -fx-background-color: #f9f9f9;" />
+        </VBox>
+    </center>
+    <bottom>
+        <HBox alignment="CENTER" spacing="20.0" style="-fx-background-color: #e0e0e0; -fx-padding: 15;">
+            <Button text="Back" onAction="#handleBack" styleClass="action-button primary" />
+            <Button fx:id="downloadButton" visible="false" disable="true" onAction="#handleDownloadAttachment" text="Download Attachment" styleClass="action-button primary" />
+            <Button fx:id="addToFolderButton" onAction="#handleAddToFolder" text="Add to Folder" styleClass="action-button success" />
+            <Button fx:id="deleteButton" onAction="#handleDeleteEmail" text="Delete Email" styleClass="action-button danger" />
+            <Button fx:id="write" onAction="#handleWrite" text="Continue write message" styleClass="action-button primary" />
+            <Button fx:id="removeFromFolderButton" onAction="#handleRemoveFromFolder" text="Remove from Folder" styleClass="action-button warning" />
+        </HBox>
+    </bottom>
+</BorderPane>

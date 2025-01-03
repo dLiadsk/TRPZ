@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.*?>
+<?import javafx.collections.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<BorderPane prefHeight="600.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.appmodule.controller.MainController">
+    <top>
+        <HBox alignment="CENTER" spacing="10" styleClass="header-bar" prefHeight="50.0">
+            <Label styleClass="header-label" text="Welcome, " />
+            <Label fx:id="usernameLabel" styleClass="header-username" />
+        </HBox>
+    </top>
+    <left>
+        <VBox prefWidth="200.0" spacing="10" styleClass="sidebar">
+            <Label styleClass="sidebar-title" text="Your Email Accounts:" />
+            <ListView fx:id="emailAccountList" VBox.vgrow="ALWAYS" />
+            <Button onAction="#handleAddEmail" styleClass="action-button" text="Add Email Account" />
+        </VBox>
+    </left>
+    <center>
+        <VBox spacing="15" styleClass="main-content" VBox.vgrow="ALWAYS">
+            <Label styleClass="section-title" text="Your Emails:" />
+            <HBox alignment="CENTER_LEFT" spacing="10">
+                <Label styleClass="label-small" text="Sort by:" />
+                <ComboBox fx:id="sortCriteriaComboBox" onAction="#handleSortEmails" prefWidth="150.0">
+                    <items>
+                        <FXCollections fx:factory="observableArrayList">
+                            <String fx:value="Date" />
+                            <String fx:value="Sender" />
+                            <String fx:value="Subject" />
+                            <String fx:value="Status" />
+                        </FXCollections>
+                    </items>
+                </ComboBox>
+            </HBox>
+            <HBox alignment="CENTER_LEFT" spacing="10">
+                <Label styleClass="label-small" text="Filter by Status:" />
+                <ComboBox fx:id="statusFilterComboBox" prefWidth="150.0" />
+                <Label styleClass="label-small" text="Search by Sender:" />
+                <TextField fx:id="senderSearchField" prefWidth="200.0" promptText="Enter sender name..." />
+                <Label styleClass="label-small" text="Search by Subject:" />
+                <TextField fx:id="subjectSearchField" prefWidth="200.0" promptText="Enter subject..." />
+            </HBox>
+            <HBox alignment="CENTER_LEFT" spacing="10">
+                <Label styleClass="label-small" text="Filter by Date:" />
+                <DatePicker fx:id="startDatePicker" promptText="Start Date" />
+                <DatePicker fx:id="endDatePicker" promptText="End Date" />
+                <Button onAction="#handleFilterByDate" styleClass="action-button" text="Apply" />
+            </HBox>
+            <ListView fx:id="emailsList" VBox.vgrow="ALWAYS" styleClass="list-view" />
+        </VBox>
+    </center>
+    <bottom>
+        <VBox spacing="10" styleClass="footer" prefHeight="80.0">
+            <Separator />
+            <HBox alignment="CENTER" spacing="20" styleClass="footer-bar">
+                <Button onAction="#handleQuit" styleClass="action-button" text="Quit" />
+                <Button onAction="#handleRefreshEmails" styleClass="action-button" text="Refresh Emails" />
+                <Button onAction="#handleWriteMessage" styleClass="action-button" text="Create Message" />
+            </HBox>
+            <Label fx:id="errorMessage" styleClass="error-message" text="" />
+        </VBox>
+    </bottom>
+</BorderPane>

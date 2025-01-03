@@ -1,0 +1,45 @@
+databaseChangeLog:
+  - changeSet:
+      id: 1
+      author: "user"
+      changes:
+        - createSequence:
+            sequenceName: user_id_seq
+            incrementBy: 50
+
+        - createTable:
+            tableName: user
+            columns:
+              - column:
+                  name: id
+                  type: BIGINT
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: username
+                  type: VARCHAR(255)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: password
+                  type: VARCHAR(255)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: phone_number
+                  type: VARCHAR(20)
+                  constraints:
+                    nullable: false
+        - createIndex:
+            tableName: user
+            indexName: idx_username
+            columns:
+              - column:
+                  name: username
+        - createIndex:
+            tableName: user
+            indexName: idx_phone_number
+            columns:
+              - column:
+                  name: phone_number

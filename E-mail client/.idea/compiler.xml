@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="CompilerConfiguration">
+    <annotationProcessing>
+      <profile default="true" name="Default" enabled="true" />
+      <profile name="Maven default annotation processors profile" enabled="true">
+        <sourceOutputDir name="target/generated-sources/annotations" />
+        <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
+        <outputRelativeToContentRoot value="true" />
+        <module name="app" />
+        <module name="app-module" />
+        <module name="E-mail client" />
+        <module name="email-service" />
+        <module name="folder-service" />
+        <module name="attachment-service" />
+        <module name="filter-service" />
+        <module name="user-service" />
+      </profile>
+    </annotationProcessing>
+    <bytecodeTargetLevel>
+      <module name="client-app" target="17" />
+      <module name="gateway" target="17" />
+      <module name="mail" target="17" />
+    </bytecodeTargetLevel>
+  </component>
+</project>

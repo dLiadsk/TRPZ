@@ -1,0 +1,65 @@
+databaseChangeLog:
+  - changeSet:
+      id: 3
+      author: "user"
+      changes:
+        - createSequence:
+            sequenceName: email_id_seq
+            incrementBy: 50
+        - createTable:
+            tableName: email_account
+            columns:
+              - column:
+                  name: id
+                  type: BIGINT
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: email_address
+                  type: VARCHAR(255)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: password
+                  type: VARCHAR(255)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: user_id
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+              - column:
+                  name: incoming_server_id
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+              - column:
+                  name: outgoing_server_id
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+              - column:
+                  name: autoconfig
+                  type: BOOLEAN
+                  constraints:
+                    nullable: false
+        - addForeignKeyConstraint:
+            baseTableName: email_account
+            baseColumnNames: user_id
+            constraintName: fk_email_account_user
+            referencedTableName: user
+            referencedColumnNames: id
+        - addForeignKeyConstraint:
+            baseTableName: email_account
+            baseColumnNames: incoming_server_id
+            constraintName: fk_email_account_incoming_server
+            referencedTableName: server_connection
+            referencedColumnNames: id
+        - addForeignKeyConstraint:
+            baseTableName: email_account
+            baseColumnNames: outgoing_server_id
+            constraintName: fk_email_account_outgoing_server
+            referencedTableName: server_connection
+            referencedColumnNames: id

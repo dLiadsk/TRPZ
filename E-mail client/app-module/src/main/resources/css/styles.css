@@ -1,0 +1,52 @@
+/* Стиль для контейнерів */
+.root {
+    -fx-font-family: "Arial";
+    -fx-background-color: #f4f4f4;
+}
+
+.container {
+    -fx-pref-height: 600px;
+    -fx-pref-width: 800px;
+}
+
+/* Загальні стилі для заголовків */
+.header-label {
+    -fx-font-size: 24px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #333;
+    -fx-alignment: CENTER;
+}
+
+/* Стиль для кнопок */
+.action-button {
+    -fx-font-size: 16px;
+    -fx-background-color: #007bff;
+    -fx-text-fill: white;
+    -fx-padding: 10 20;
+    -fx-border-radius: 5;
+    -fx-background-radius: 5;
+}
+
+.action-button:hover {
+    -fx-background-color: #0056b3;
+}
+
+.action-button:pressed {
+    -fx-background-color: #004494;
+}
+
+/* Вирівнювання текстових полів */
+.input-field {
+    -fx-font-size: 14px;
+    -fx-background-color: #ffffff;
+    -fx-border-color: #b3c0d1;
+    -fx-border-width: 1;
+    -fx-padding: 8;
+    -fx-background-insets: 0;
+}
+
+/* Вирівнювання для VBox і HBox */
+.vbox, .hbox {
+    -fx-spacing: 15;
+    -fx-padding: 20;
+}
