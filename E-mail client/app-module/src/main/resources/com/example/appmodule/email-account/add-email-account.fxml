@@ -4,7 +4,7 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<BorderPane xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.appmodule.controller.email.AddEmailController">
+<BorderPane xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.appmodule.controller.email_account.AddEmailController">
     <center>
         <VBox alignment="CENTER" prefHeight="509.0" prefWidth="517.0" spacing="15" BorderPane.alignment="CENTER">
             <padding>

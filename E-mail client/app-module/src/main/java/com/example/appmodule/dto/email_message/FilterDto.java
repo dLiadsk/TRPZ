@@ -1,5 +1,6 @@
-package com.example.appmodule.dto.email;
+package com.example.appmodule.dto.email_message;
 
+import com.example.appmodule.dto.email_message.EmailMessageContextDto;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;

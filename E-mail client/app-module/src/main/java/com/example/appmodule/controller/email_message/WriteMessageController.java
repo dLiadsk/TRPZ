@@ -2,15 +2,15 @@ package com.example.appmodule.controller.email_message;
 
 import com.example.appmodule.config.AuthenticatedUser;
 import com.example.appmodule.controller.MainController;
+import com.example.appmodule.dto.email_message.EmailMessageDto;
 import com.example.appmodule.service.EmailService;
-import com.example.appmodule.dto.email.EmailAccountDto;
+import com.example.appmodule.dto.email_account.EmailAccountDto;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
-import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
@@ -48,6 +48,21 @@ public class WriteMessageController {
         this.authenticatedUser = AuthenticatedUser.getInstance();
     }
 
+    public void setEmailMessageContext(EmailMessageDto emailMessageContext) {
+        EmailAccountDto emailAccountDto = authenticatedUser.getUser().getEmailAccounts().stream()
+                .filter(emailAccountDto1 -> emailAccountDto1.getEmailAddress().equals(emailMessageContext.getFrom()))
+                .findFirst()
+                .orElseThrow(() -> new IllegalArgumentException("Email address not found"));
+        senderComboBox.setValue(emailAccountDto);
+        subjectField.setText(emailMessageContext.getSubject());
+        recipientField.setText(String.join(", ", emailMessageContext.getTo().toString())
+                .replace("[", "")
+                .replace("]", ""));
+        bodyField.setText(emailMessageContext.getBody());
+        attachmentList.setItems(FXCollections.observableArrayList(emailMessageContext.getAttachmentPaths()));
+
+    }
+
     public void setMainController(MainController mainController) {
         this.mainController = mainController;
     }
@@ -58,7 +73,6 @@ public class WriteMessageController {
         ObservableList<EmailAccountDto> senderOptions = FXCollections.observableArrayList(authenticatedUser.getUser().getEmailAccounts());
         senderComboBox.setItems(senderOptions);
 
-        attachmentList.setItems(attachments);
 
         addAttachmentButton.setOnAction(event -> addAttachment());
         sendButton.setOnAction(event -> sendEmail());
@@ -68,7 +82,7 @@ public class WriteMessageController {
 
     private void addAttachment() {
         FileChooser fileChooser = new FileChooser();
-        fileChooser.setTitle("Оберіть файл для прикріплення");
+        fileChooser.setTitle("Select a file to attach.");
         List<File> selectedFiles = fileChooser.showOpenMultipleDialog(addAttachmentButton.getScene().getWindow());
 
         if (selectedFiles != null) {
@@ -88,16 +102,19 @@ public class WriteMessageController {
         String body = bodyField.getText();
 
         if (sender == null || sender.getEmailAddress().isEmpty()) {
-            showAlert("Помилка", "Оберіть адресу відправника!", Alert.AlertType.ERROR);
+            showAlert("Error", "Choose a sender address!", Alert.AlertType.ERROR);
             return;
         }
         if (subject.isEmpty() || recipients.isEmpty() || body.isEmpty()) {
-            showAlert("Помилка", "Заповніть усі обов'язкові поля!", Alert.AlertType.ERROR);
+            showAlert("Error", "Fill in all required fields!", Alert.AlertType.ERROR);
             return;
         }
         String result = emailService.sendMessage(subject, sender, recipients, body, attachments);
-        mainController.handleRefreshEmails();
-        mainController.showError(result);
+        if (mainController != null) {
+            mainController.handleRefreshEmails();
+            mainController.showError(result);
+        }
+
         navigateToMainPage();
     }
 
@@ -105,12 +122,12 @@ public class WriteMessageController {
         EmailAccountDto sender = senderComboBox.getValue();
         if (sender != null && !sender.getEmailAddress().isEmpty()) {
             Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
-            alert.setTitle("Підтвердження");
-            alert.setHeaderText("Скасувати створення листа?");
-            alert.setContentText("Чи бажаєте зберегти повідомлення як чернетку?");
+            alert.setTitle("Confirmation");
+            alert.setHeaderText("Cancel creating email?");
+            alert.setContentText("Do you want to save the message as a draft?");
 
-            ButtonType saveButton = new ButtonType("Зберегти");
-            ButtonType discardButton = new ButtonType("Не зберігати", ButtonBar.ButtonData.CANCEL_CLOSE);
+            ButtonType saveButton = new ButtonType("Save");
+            ButtonType discardButton = new ButtonType("Do not save", ButtonBar.ButtonData.CANCEL_CLOSE);
 
             alert.getButtonTypes().setAll(saveButton, discardButton);
 
@@ -125,7 +142,7 @@ public class WriteMessageController {
         navigateToMainPage();
     }
 
-    private void saveDraft( EmailAccountDto sender) {
+    private void saveDraft(EmailAccountDto sender) {
 
         String subject = subjectField.getText();
         List<String> recipients = Arrays.stream(recipientField.getText().split(","))
@@ -135,8 +152,10 @@ public class WriteMessageController {
         String body = bodyField.getText();
 
         String result = emailService.saveDraft(subject, sender, recipients, body, attachments);
-        mainController.handleRefreshEmails();
-        mainController.showError(result);
+        if (mainController != null) {
+            mainController.handleRefreshEmails();
+            mainController.showError(result);
+        }
 
     }
 

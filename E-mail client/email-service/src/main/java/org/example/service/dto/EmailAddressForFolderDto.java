@@ -1,4 +1,4 @@
-package com.example.appmodule.dto.email;
+package org.example.service.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -10,6 +10,7 @@ import lombok.extern.jackson.Jacksonized;
 @RequiredArgsConstructor
 @AllArgsConstructor
 @Jacksonized
+@Builder
 public class EmailAddressForFolderDto {
     private String folderName;
     private String address;

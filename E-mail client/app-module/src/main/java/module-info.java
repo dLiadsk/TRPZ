@@ -23,15 +23,16 @@ module com.example.appmodule {
     exports com.example.appmodule.controller.user;
     opens com.example.appmodule.controller.user to javafx.fxml;
 
-    exports com.example.appmodule.controller.email;
-    opens com.example.appmodule.controller.email to javafx.fxml;
+    exports com.example.appmodule.controller.email_account;
+    opens com.example.appmodule.controller.email_account to javafx.fxml;
 
     exports com.example.appmodule.controller.email_message;
     opens com.example.appmodule.controller.email_message to javafx.fxml;
 
     exports com.example.appmodule.dto.user;
-    exports com.example.appmodule.dto.email;
     exports com.example.appmodule.service;
-        exports com.example.appmodule.config;
+    exports com.example.appmodule.config;
     exports com.example.appmodule.dto;
+    exports com.example.appmodule.dto.email_message;
+    exports com.example.appmodule.dto.email_account;
 }

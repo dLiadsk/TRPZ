@@ -1,4 +1,4 @@
-package com.example.appmodule.dto.email;
+package com.example.appmodule.dto.email_message;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -6,6 +6,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.jackson.Jacksonized;
 
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 @Data
@@ -21,7 +22,10 @@ public class EmailMessageContextDto {
 
     @Override
     public String toString() {
-        return from + ": " + subject;
+        if (sentDate.getDayOfYear() == LocalDateTime.now().getDayOfYear())
+            return sentDate.toLocalTime().format(DateTimeFormatter.ofPattern("HH:mm:ss")) + "    " + from + ": " + subject;
+
+        return sentDate.toLocalDate() + "    " + from + ": " + subject;
     }
 }
 

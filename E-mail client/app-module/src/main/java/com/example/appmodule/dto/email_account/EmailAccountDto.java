@@ -1,4 +1,4 @@
-package com.example.appmodule.dto.email;
+package com.example.appmodule.dto.email_account;
 
 import com.example.appmodule.dto.ServerConnectionDto;
 import lombok.*;

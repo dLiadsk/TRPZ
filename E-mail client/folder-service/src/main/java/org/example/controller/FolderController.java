@@ -31,9 +31,8 @@ public class FolderController {
     @PostMapping("/save/messages")
     public ResponseEntity<Void> saveEmails(@RequestBody MessagesToFolderDto messages) {
         try {
-            if (!messages.getFolderName().equals("Trash")){
-                messages.setFolderName("All");
-                folderService.saveMessagesToFolder(messages);
+            if (!messages.getFolderName().equals("Trash") && !messages.getFolderName().equals("Drafts") && !messages.getFolderName().equals("Spam")){
+                folderService.saveMessagesToFolder(new MessagesToFolderDto(messages.getMessageIds(), messages.getEmailAddress(), "All"));
             }
             folderService.saveMessagesToFolder(messages);
             return ResponseEntity.ok().build();

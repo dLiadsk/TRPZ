@@ -18,7 +18,7 @@ public class EmailAddressService {
         Optional<EmailAddressEntity> existingAddress = emailAddressRepository.findByAddress(address);
         if (existingAddress.isPresent()) {
             log.info("Email address {} already exists.", address);
-            return; // або киньте виняток, якщо це критично
+            return;
         }
 
         EmailAddressEntity newAddress = new EmailAddressEntity();

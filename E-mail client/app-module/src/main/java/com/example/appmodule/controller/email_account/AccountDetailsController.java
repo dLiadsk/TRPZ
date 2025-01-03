@@ -1,10 +1,9 @@
-package com.example.appmodule.controller.email;
+package com.example.appmodule.controller.email_account;
 
 import com.example.appmodule.controller.email_message.EmailDetailsController;
-import com.example.appmodule.dto.email.EmailAccountDto;
-import com.example.appmodule.dto.email.EmailAddressForFolderDto;
-import com.example.appmodule.dto.email.EmailMessageContextDto;
-import com.example.appmodule.dto.email.EmailMessageDto;
+import com.example.appmodule.dto.email_account.EmailAccountDto;
+import com.example.appmodule.dto.email_message.EmailMessageContextDto;
+import com.example.appmodule.dto.email_message.EmailMessageDto;
 import com.example.appmodule.service.EmailService;
 import com.example.appmodule.service.FolderService;
 import javafx.collections.FXCollections;
@@ -13,14 +12,12 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.Alert;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
 
 import java.io.IOException;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
@@ -65,6 +62,7 @@ public class AccountDetailsController {
                 EmailMessageContextDto selectedEmail = messageListView.getSelectionModel().getSelectedItem();
                 if (selectedEmail != null) {
                     openEmailDetails(selectedEmail);
+
                 }
             }
         });
@@ -95,7 +93,6 @@ public class AccountDetailsController {
     @FXML
     private void handleBackToMain() {
 
-        //bez css
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/example/appmodule/Main.fxml"));
             Parent mainRoot = loader.load();
@@ -106,16 +103,16 @@ public class AccountDetailsController {
         }
     }
     private void openEmailDetails(EmailMessageContextDto email) {
+
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/example/appmodule/email-message/view-message.fxml"));
             BorderPane root = loader.load();
-
+            Stage stage = (Stage) accountEmailLabel.getScene().getWindow();
             EmailDetailsController controller = loader.getController();
             EmailMessageDto emailDto = emailService.getMessage(email);
             controller.setEmailDetails(emailDto, false);
             controller.setAccount(account);
             controller.setFolder(String.valueOf(folderListView.getSelectionModel().getSelectedItem()));
-            Stage stage = (Stage) accountEmailLabel.getScene().getWindow();
             Scene scene = new Scene(root);
             scene.getStylesheets().add(getClass().getResource("/css/styles.css").toExternalForm());
 
@@ -126,6 +123,7 @@ public class AccountDetailsController {
             e.printStackTrace();
         }
     }
+
     @FXML
     private void handleCreateFolder() {
         Optional<String> folderName = Optional.ofNullable(showInputDialog("Create Folder", "Enter folder name:"));

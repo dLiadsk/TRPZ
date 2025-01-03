@@ -1,6 +1,6 @@
 package com.example.appmodule.service;
 
-import com.example.appmodule.dto.email.EmailAccountDto;
+import com.example.appmodule.dto.email_account.EmailAccountDto;
 import com.example.appmodule.dto.ServerConnectionDto;
 import com.example.appmodule.dto.user.UserDto;
 import lombok.RequiredArgsConstructor;

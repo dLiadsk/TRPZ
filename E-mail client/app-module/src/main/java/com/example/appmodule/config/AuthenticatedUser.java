@@ -1,6 +1,6 @@
 package com.example.appmodule.config;
 
-import com.example.appmodule.dto.email.EmailMessageContextDto;
+import com.example.appmodule.dto.email_message.EmailMessageContextDto;
 import com.example.appmodule.dto.user.UserDto;
 import lombok.Getter;
 import lombok.Setter;

@@ -1,8 +1,7 @@
 package com.example.appmodule.service;
 
-import com.example.appmodule.dto.email.EmailAccountDto;
-import com.example.appmodule.dto.email.EmailMessageContextDto;
-import com.example.appmodule.dto.email.FilterDto;
+import com.example.appmodule.dto.email_message.EmailMessageContextDto;
+import com.example.appmodule.dto.email_message.FilterDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.*;

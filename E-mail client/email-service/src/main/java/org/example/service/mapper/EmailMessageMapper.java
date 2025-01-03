@@ -1,7 +1,6 @@
 package org.example.service.mapper;
 
 import org.example.model.EmailMessage;
-import org.example.model.common.EmailStatus;
 import org.example.repository.entity.EmailMessageEntity;
 import org.example.service.dto.EmailMessageContextDto;
 import org.example.service.dto.EmailMessageDto;
@@ -25,9 +24,8 @@ public class EmailMessageMapper {
         entity.setEmailStatus(emailMessage.getEmailStatus());
         return entity;
     }
-    public EmailMessageEntity mapToEntity(EmailMessageSendDto emailMessage, String id) {
+    public EmailMessageEntity mapToEntity(EmailMessageSendDto emailMessage) {
         EmailMessageEntity entity = new EmailMessageEntity();
-        entity.setMessageId(id);
         entity.setSubject(emailMessage.getSubject());
         entity.setFrom(emailMessage.getFrom().getEmailAddress());
         entity.setTo(emailMessage.getTo());
@@ -36,7 +34,6 @@ public class EmailMessageMapper {
         entity.setAttachmentPaths(emailMessage.getAttachmentPaths());
         return entity;
     }
-
     public EmailMessageContextDto mapToEmailMessageContextDto(EmailMessageEntity entity) {
         return new EmailMessageContextDto(entity.getMessageId(), entity.getSubject(), entity.getFrom(), entity.getSentDate(), entity.getEmailStatus().name());
     }

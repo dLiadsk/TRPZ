@@ -15,4 +15,5 @@ public class UserDto {
      List<EmailAccountDto> emailAccounts;
      String password;
      String phoneNumber;
+     String jwt;
 }

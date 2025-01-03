@@ -3,7 +3,7 @@ package com.example.appmodule.controller.user;
 import com.example.appmodule.config.AuthenticatedUser;
 import com.example.appmodule.service.EmailService;
 import com.example.appmodule.service.UserService;
-import com.example.appmodule.dto.email.EmailMessageContextDto;
+import com.example.appmodule.dto.email_message.EmailMessageContextDto;
 import com.example.appmodule.dto.user.UserDto;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -62,6 +62,8 @@ public class UserLoginController {
         }
         catch (IllegalArgumentException ex){
             showError("Invalid username or password.");
+        } catch (Exception e) {
+            throw new RuntimeException(e);
         }
     }
 

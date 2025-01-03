@@ -34,5 +34,16 @@ public class AttachmentController {
         }
     }
 
+    @PostMapping("/downloadFiles")
+    public ResponseEntity<List<String>> downloadAttachments(@RequestBody List<FileDto> fileDto) {
+        try {
+            List<String> response = attachmentService.downloadAttachments(fileDto);
+            return ResponseEntity.ok(response);
+        } catch (FileNotFoundException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+        } catch (IOException e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+        }
+    }
 }
 

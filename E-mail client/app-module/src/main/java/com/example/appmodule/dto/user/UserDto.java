@@ -1,6 +1,6 @@
 package com.example.appmodule.dto.user;
 
-import com.example.appmodule.dto.email.EmailAccountDto;
+import com.example.appmodule.dto.email_account.EmailAccountDto;
 import lombok.*;
 import lombok.extern.jackson.Jacksonized;
 
@@ -16,4 +16,6 @@ public class UserDto {
      private List<EmailAccountDto> emailAccounts;
      private String password;
      private String phoneNumber;
+     private String jwt;
+
 }

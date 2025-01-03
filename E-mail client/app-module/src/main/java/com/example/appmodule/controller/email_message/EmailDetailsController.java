@@ -1,8 +1,8 @@
 package com.example.appmodule.controller.email_message;
 
-import com.example.appmodule.controller.email.AccountDetailsController;
-import com.example.appmodule.dto.email.EmailAccountDto;
-import com.example.appmodule.dto.email.EmailMessageDto;
+import com.example.appmodule.controller.email_account.AccountDetailsController;
+import com.example.appmodule.dto.email_account.EmailAccountDto;
+import com.example.appmodule.dto.email_message.EmailMessageDto;
 import com.example.appmodule.service.EmailService;
 import com.example.appmodule.service.FolderService;
 import javafx.fxml.FXML;
@@ -12,6 +12,7 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
@@ -25,6 +26,8 @@ import java.util.Optional;
 public class EmailDetailsController {
     private final FolderService folderService;
     private final EmailService emailService;
+    @FXML
+    private Button write;
     @FXML
     private Button removeFromFolderButton;
 
@@ -236,5 +239,24 @@ public class EmailDetailsController {
         alert.setHeaderText(null);
         alert.setContentText(message);
         alert.showAndWait();
+    }
+    @FXML
+    private void handleWrite() {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/example/appmodule/email-message/create-message.fxml"));
+            GridPane root = loader.load();
+            WriteMessageController controller = loader.getController();
+            controller.setEmailMessageContext(currentEmail);
+            Stage stage = (Stage) downloadButton.getScene().getWindow();
+
+            Scene scene = new Scene(root);
+            scene.getStylesheets().add(getClass().getResource("/css/styles.css").toExternalForm());
+
+            stage.setScene(scene);
+            stage.setTitle("Write New Mail");
+            stage.show();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 }

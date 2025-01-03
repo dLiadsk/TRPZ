@@ -29,15 +29,17 @@ public class UserController {
             return new ResponseEntity<>(createdUser, HttpStatus.CREATED);
         } catch (IllegalArgumentException e) {
             return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
         }
     }
 
     @PostMapping("/login")
     public ResponseEntity<UserDto> login(@RequestBody UserLoginDto user) {
         try {
-            UserDto loginUser = userService.login(user.getUsername(), user.getPassword());
+            UserDto loginUser = userService.login(user.getUsername(), user.getPassword(), user.getKey());
             return new ResponseEntity<>(loginUser, HttpStatus.OK);
-        } catch (IllegalArgumentException e) {
+        } catch (Exception e) {
             return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
         }
     }

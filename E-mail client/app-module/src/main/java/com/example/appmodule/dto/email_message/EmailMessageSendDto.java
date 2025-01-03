@@ -1,24 +1,21 @@
-package com.example.appmodule.dto.email;
+package com.example.appmodule.dto.email_message;
 
+import com.example.appmodule.dto.email_account.EmailAccountDto;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.jackson.Jacksonized;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
 @Data
 @RequiredArgsConstructor
 @AllArgsConstructor
 @Jacksonized
-public class EmailMessageDto {
-    private String messageId;
+public class EmailMessageSendDto {
     private String subject;  // Тема листа
-    private String from;  // Відправник
+    private EmailAccountDto from;
     private List<String> to;  // Список одержувачів
-    private LocalDateTime sentDate;  // Дата відправлення
     private String body;  // Тіло повідомлення
     private List<String> attachmentPaths;  // Список вкладень
-    private String emailStatus;
 }

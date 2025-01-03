@@ -16,15 +16,18 @@ import org.example.repository.EmailMessageRepository;
 import org.example.repository.entity.EmailMessageEntity;
 import org.example.service.dto.*;
 import org.example.service.mapper.EmailMessageMapper;
+import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.sql.SQLException;
 import java.time.ZoneId;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -40,7 +43,7 @@ public class EmailMessageService {
     @Transactional(readOnly = true)
     public EmailMessageDto getEmailMessage(EmailMessageContextDto contextDto) {
         EmailMessageEntity entity = emailMessageRepository.findById(contextDto.getId()).orElseThrow(() -> new IllegalArgumentException("Email message not found"));
-        if (entity.getEmailStatus().equals(EmailStatus.UNREAD)){
+        if (entity.getEmailStatus().equals(EmailStatus.UNREAD)) {
             entity.setEmailStatus(EmailStatus.READ);
             emailMessageRepository.save(entity);
         }
@@ -65,14 +68,14 @@ public class EmailMessageService {
         if (!emailMessageSendDto.getAttachmentPaths().isEmpty()) {
             // Завантаження файлів з attachment-service
             List<String> attachmentPaths = emailMessageSendDto.getAttachmentPaths();
-            List<FileDto> attachments = attachmentService.downloadAttachments(attachmentPaths); // Повертаємо List<byte[]>
+            List<FileDto> attachments = attachmentService.getAttachments(attachmentPaths); // Повертаємо List<byte[]>
             for (FileDto fileDto : attachments) {
                 MimeBodyPart attachmentPart = new MimeBodyPart();
 
                 // Використовуємо ByteArrayDataSource замість File
                 ByteArrayDataSource source = new ByteArrayDataSource(fileDto.getFileBytes(), fileDto.getMimeType());
                 attachmentPart.setDataHandler(new DataHandler(source));
-                attachmentPart.setFileName(fileDto.getName()); // Унікальна назва для кожного вкладення
+                attachmentPart.setFileName(fileDto.getName());
                 multipart.addBodyPart(attachmentPart);
             }
         }
@@ -85,10 +88,17 @@ public class EmailMessageService {
         }
         String messageId = message.getHeader("Message-ID", null);
         // Збереження у базу даних
-        EmailMessageEntity entity = emailMessageMapper.mapToEntity(emailMessageSendDto, messageId);
+        EmailMessageEntity entity = emailMessageMapper.mapToEntity(emailMessageSendDto);
+        entity.setMessageId(messageId);
         entity.setEmailStatus(EmailStatus.SENT);
         emailMessageRepository.save(entity);
+        MessagesToFolderDto messagesToTrash = new MessagesToFolderDto(List.of(entity.getMessageId()), emailAccountDto.getEmailAddress(), "Sent");
+        ResponseEntity<Void> response = restTemplate.postForEntity(folderControllerUrl + "/save/messages", messagesToTrash, Void.class);
+        if (!response.getStatusCode().is2xxSuccessful()) {
+            throw new IllegalArgumentException("Failed to save emails. Status code: " + response.getStatusCode());
+        }
     }
+
     public void deleteEmailMessage(EmailMessageDeleteDto emailMessageDeleteDto) throws MessagingException {
         EmailMessageEntity emailMessage = emailMessageRepository.findById(emailMessageDeleteDto.getMessageId())
                 .orElseThrow(() -> new IllegalArgumentException("Email message with the given ID does not exist"));
@@ -100,7 +110,7 @@ public class EmailMessageService {
 
         MessagesToFolderDto messagesToTrash = new MessagesToFolderDto(List.of(emailMessageDeleteDto.getMessageId()), emailAccountDto.getEmailAddress(), "Trash");
         ResponseEntity<Void> response = restTemplate.postForEntity(folderControllerUrl + "/save/messages", messagesToTrash, Void.class);
-        if (!response.getStatusCode().is2xxSuccessful()){
+        if (!response.getStatusCode().is2xxSuccessful()) {
             throw new IllegalArgumentException("Failed to save emails. Status code: " + response.getStatusCode());
         }
         MessagesToFolderDto messagesDeleteFromInbox = new MessagesToFolderDto(List.of(emailMessageDeleteDto.getMessageId()), emailAccountDto.getEmailAddress(), "Inbox");
@@ -152,7 +162,7 @@ public class EmailMessageService {
 
             sourceFolder.close(false);
             trashFolder.close(false);
-        }catch (MessageRemovedException e) {
+        } catch (MessageRemovedException e) {
             log.warn("Email message already removed: {}", e.getMessage());
         } catch (MessagingException e) {
             log.error("Failed to delete email message: {}", e.getMessage());
@@ -163,65 +173,76 @@ public class EmailMessageService {
 
     }
 
-    @Transactional
     public void saveDraft(EmailMessageSendDto emailMessageSendDto) throws MessagingException {
         EmailAccountDto emailAccountDto = emailMessageSendDto.getFrom();
 
         Session session = getSession(emailAccountDto, true);
-        MimeMessage message = new MimeMessage(session);
-        message.setFrom(new InternetAddress(emailAccountDto.getEmailAddress()));
-        message.setRecipients(Message.RecipientType.TO,
-                InternetAddress.parse(String.join(",", emailMessageSendDto.getTo())));
-        message.setSubject(emailMessageSendDto.getSubject());
-        MimeBodyPart mailBody = new MimeBodyPart();
-        mailBody.setText(emailMessageSendDto.getBody());
-        Multipart multipart = new MimeMultipart();
-        multipart.addBodyPart(mailBody);
-        if (!emailMessageSendDto.getAttachmentPaths().isEmpty()) {
-            // Завантаження файлів з attachment-service
-            List<String> attachmentPaths = emailMessageSendDto.getAttachmentPaths();
-            List<FileDto> attachments = attachmentService.downloadAttachments(attachmentPaths); // Повертаємо List<byte[]>
-            for (FileDto fileDto : attachments) {
-                MimeBodyPart attachmentPart = new MimeBodyPart();
+        String messageId;
+        if (session == null) {
+            messageId = UUID.randomUUID().toString();
+        } else {
+            MimeMessage message = new MimeMessage(session);
+            message.setFrom(new InternetAddress(emailAccountDto.getEmailAddress()));
+            message.setRecipients(Message.RecipientType.TO,
+                    InternetAddress.parse(String.join(",", emailMessageSendDto.getTo())));
+            message.setSubject(emailMessageSendDto.getSubject());
+            MimeBodyPart mailBody = new MimeBodyPart();
+            mailBody.setText(emailMessageSendDto.getBody());
+            Multipart multipart = new MimeMultipart();
+            multipart.addBodyPart(mailBody);
+            if (!emailMessageSendDto.getAttachmentPaths().isEmpty()) {
+                // Завантаження файлів з attachment-service
+                List<String> attachmentPaths = emailMessageSendDto.getAttachmentPaths();
+                List<FileDto> attachments = attachmentService.getAttachments(attachmentPaths); // Повертаємо List<byte[]>
+                for (FileDto fileDto : attachments) {
+                    MimeBodyPart attachmentPart = new MimeBodyPart();
 
-                // Використовуємо ByteArrayDataSource замість File
-                ByteArrayDataSource source = new ByteArrayDataSource(fileDto.getFileBytes(), fileDto.getMimeType());
-                attachmentPart.setDataHandler(new DataHandler(source));
-                attachmentPart.setFileName(fileDto.getName()); // Унікальна назва для кожного вкладення
+                    // Використовуємо ByteArrayDataSource замість File
+                    ByteArrayDataSource source = new ByteArrayDataSource(fileDto.getFileBytes(), fileDto.getMimeType());
+                    attachmentPart.setDataHandler(new DataHandler(source));
+                    attachmentPart.setFileName(fileDto.getName()); // Унікальна назва для кожного вкладення
 
-                multipart.addBodyPart(attachmentPart);
+                    multipart.addBodyPart(attachmentPart);
+                }
             }
-        }
-        message.setContent(multipart);
+            message.setContent(multipart);
 
-        Store store = session.getStore("imap");
-        store.connect(emailAccountDto.getIncomingServer().getHost(), emailAccountDto.getEmailAddress(), emailAccountDto.getPassword());
-        Folder draftsFolder = store.getFolder("Drafts");
-        if (!draftsFolder.exists()) {
-            draftsFolder.create(Folder.HOLDS_MESSAGES);
+            Store store = session.getStore("imap");
+            store.connect(emailAccountDto.getIncomingServer().getHost(), emailAccountDto.getEmailAddress(), emailAccountDto.getPassword());
+            Folder draftsFolder = store.getFolder("Drafts");
+            if (!draftsFolder.exists()) {
+                draftsFolder.create(Folder.HOLDS_MESSAGES);
+            }
+            draftsFolder.open(Folder.READ_WRITE);
+            message.saveChanges();
+            draftsFolder.appendMessages(new Message[]{message});
+            draftsFolder.close(false);
+            store.close();
+            messageId = message.getHeader("Message-ID", null);
         }
-        draftsFolder.open(Folder.READ_WRITE);
-        message.saveChanges();
-        draftsFolder.appendMessages(new Message[]{message});
-        draftsFolder.close(false);
-        store.close();
-        String messageId = message.getHeader("Message-ID", null);
         // Збереження у базу даних
-        EmailMessageEntity entity = emailMessageMapper.mapToEntity(emailMessageSendDto, messageId);
+        EmailMessageEntity entity = emailMessageMapper.mapToEntity(emailMessageSendDto);
+        entity.setMessageId(messageId);
+        entity.setEmailStatus(EmailStatus.DRAFT);
+
         emailMessageRepository.save(entity);
 
-        MessagesToFolderDto messages = new MessagesToFolderDto(List.of(messageId), emailAccountDto.getEmailAddress(), "Draft");
+        MessagesToFolderDto messages = new MessagesToFolderDto(List.of(messageId), emailAccountDto.getEmailAddress(), "Drafts");
         ResponseEntity<Void> response = restTemplate.postForEntity(folderControllerUrl + "/save/messages", messages, Void.class);
-        if (!response.getStatusCode().is2xxSuccessful()){
+        if (!response.getStatusCode().is2xxSuccessful()) {
             throw new IllegalArgumentException("Failed to save emails. Status code: " + response.getStatusCode());
         }
     }
 
-    public List<EmailMessageContextDto> getEmailMessages(List<EmailAccountDto> emailAccounts) throws MessagingException, IOException, SQLException {
+    public List<EmailMessageContextDto> getEmailMessages(List<EmailAccountDto> emailAccounts) throws MessagingException, IOException {
         Objects.requireNonNull(emailAccounts, "EmailAccounts cannot be null");
 
         // Завантаження існуючих повідомлень з бази
         Set<String> existingMessageIds = new HashSet<>(emailMessageRepository.findAllMessageIds());
+        List<EmailMessageContextDto> messages = new ArrayList<>();
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
 
         for (EmailAccountDto emailAccount : emailAccounts) {
             if (emailAccount == null) {
@@ -230,22 +251,35 @@ public class EmailMessageService {
             }
             // Підключення до поштового серверу
             Session session = getSession(emailAccount, true);
-            Store store = session.getStore(emailAccount.getIncomingServer().getProtocol().toLowerCase());
-            store.connect(emailAccount.getIncomingServer().getHost(), emailAccount.getEmailAddress(), emailAccount.getPassword());
-            Folder rootFolder = store.getDefaultFolder();
-
-            Folder[] folders = rootFolder.list();
-
-            for (Folder folder : folders) {
-                saveMessagesFromFolder(store, existingMessageIds, emailAccount, folder.getName());
+            if (session != null) {
+                Store store = session.getStore(emailAccount.getIncomingServer().getProtocol().toLowerCase());
+                store.connect(emailAccount.getIncomingServer().getHost(), emailAccount.getEmailAddress(), emailAccount.getPassword());
+                Folder rootFolder = store.getDefaultFolder();
+                Folder[] folders = rootFolder.list();
+                for (Folder folder : folders) {
+                    saveMessagesFromFolder(store, existingMessageIds, emailAccount, folder.getName());
+                }
+                store.close();
             }
-            store.close();
+
+            HttpEntity<EmailAddressForFolderDto> requestEntity = new HttpEntity<>(new EmailAddressForFolderDto("All", emailAccount.getEmailAddress()), headers);
+            ResponseEntity<List<EmailMessageContextDto>> response = restTemplate.exchange(
+                    folderControllerUrl + "/get/emails/from/folder",
+                    HttpMethod.POST,
+                    requestEntity,
+                    new ParameterizedTypeReference<>() {
+                    }
+            );
+            if (response.getStatusCode().is2xxSuccessful()) {
+                messages.addAll(Objects.requireNonNull(response.getBody()));
+            }
         }
         // Повертаємо всі повідомлення (з бази + нові)
-        return emailMessageRepository.findAll().stream()
-                .map(emailMessageMapper::mapToEmailMessageContextDto)
-                .toList();
+        return messages.stream()
+                .sorted(Comparator.comparing(EmailMessageContextDto::getSentDate))
+                .collect(Collectors.toList());
     }
+
     private void saveMessagesFromFolder(Store store, Set<String> existingMessageIds, EmailAccountDto emailAccount, String folderName) throws MessagingException, IOException {
         Folder folder = store.getFolder(folderName);
         List<String> messagesToSaveInFolder = new ArrayList<>();
@@ -282,19 +316,27 @@ public class EmailMessageService {
                 emailMessage.setSubject(message.getSubject());
                 emailMessage.setSentDate(message.getSentDate().toInstant()
                         .atZone(ZoneId.systemDefault())
-                        .toLocalDateTime()); // Використовуємо LocalDateTime
-                emailMessage.setBody(getTextFromMessage(message));
-                emailMessage.setAttachmentNames(getAttachmentNamesFromMessage(message));
+                        .toLocalDateTime());
+
+                if (message.isMimeType("multipart/*")) {
+                    List<String> attachmentPaths = new ArrayList<>();
+                    StringBuilder bodyContent = new StringBuilder();
+                    extractAttachmentsAndBody((Multipart) message.getContent(), attachmentPaths, bodyContent);
+                    emailMessage.setBody(bodyContent.toString());
+                    emailMessage.setAttachmentNames(attachmentPaths);
+                } else {
+                    emailMessage.setBody(getTextFromMessage(message));
+                }
 
                 Flags flags = message.getFlags();
                 if (flags.contains(Flags.Flag.SEEN)) {
-                    emailMessage.setEmailStatus(EmailStatus.READ); // Переглянуте
+                    emailMessage.setEmailStatus(EmailStatus.READ);
                 } else if (flags.contains(Flags.Flag.DELETED)) {
-                    emailMessage.setEmailStatus(EmailStatus.DELETED); // Непрочитане
+                    emailMessage.setEmailStatus(EmailStatus.DELETED);
                 } else if (flags.contains(Flags.Flag.DRAFT)) {
-                    emailMessage.setEmailStatus(EmailStatus.DRAFT); // Непрочитане
+                    emailMessage.setEmailStatus(EmailStatus.DRAFT);
                 } else {
-                    emailMessage.setEmailStatus(EmailStatus.UNREAD); // Непрочитане
+                    emailMessage.setEmailStatus(EmailStatus.UNREAD);
                 }
 
                 EmailMessageEntity entity = emailMessageMapper.mapToEntity(emailMessage);
@@ -305,7 +347,7 @@ public class EmailMessageService {
         }
         MessagesToFolderDto messages = new MessagesToFolderDto(messagesToSaveInFolder, emailAccount.getEmailAddress(), folderName);
         ResponseEntity<Void> response = restTemplate.postForEntity(folderControllerUrl + "/save/messages", messages, Void.class);
-        if (!response.getStatusCode().is2xxSuccessful()){
+        if (!response.getStatusCode().is2xxSuccessful()) {
             throw new IllegalArgumentException("Failed to save emails. Status code: " + response.getStatusCode());
         }
 
@@ -350,37 +392,33 @@ public class EmailMessageService {
         return null;
     }
 
-    private List<String> getAttachmentNamesFromMessage(Message message) throws MessagingException, IOException {
-        List<String> attachmentNames = new ArrayList<>();
-        if (message.isMimeType("multipart/*")) {
-            Multipart multipart = (Multipart) message.getContent();
-            for (int i = 0; i < multipart.getCount(); i++) {
-                BodyPart bodyPart = multipart.getBodyPart(i);
-                String disposition = bodyPart.getDisposition();
+    private void extractAttachmentsAndBody(Multipart multipart, List<String> attachmentPaths, StringBuilder bodyContent) throws MessagingException, IOException {
+        List<FileDto> attachmentFiles = new ArrayList<>();
+        for (int i = 0; i < multipart.getCount(); i++) {
+            BodyPart bodyPart = multipart.getBodyPart(i);
+            String disposition = bodyPart.getDisposition();
 
-                // Перевіряємо чи це вкладення
-                if (Part.ATTACHMENT.equalsIgnoreCase(disposition) ||
-                        (disposition == null && bodyPart.getFileName() != null)) {
-                    attachmentNames.add(bodyPart.getFileName());
-                }
-
-                // Рекурсивна перевірка для вкладених MIME
-                if (bodyPart.isMimeType("multipart/*")) {
-                    Multipart nestedMultipart = (Multipart) bodyPart.getContent();
-                    for (int j = 0; j < nestedMultipart.getCount(); j++) {
-                        BodyPart nestedBodyPart = nestedMultipart.getBodyPart(j);
-                        String nestedDisposition = nestedBodyPart.getDisposition();
-                        if (Part.ATTACHMENT.equalsIgnoreCase(nestedDisposition) ||
-                                (nestedDisposition == null && nestedBodyPart.getFileName() != null)) {
-                            attachmentNames.add(nestedBodyPart.getFileName());
-                        }
-                    }
+            // Обробка вкладень
+            if (Part.ATTACHMENT.equalsIgnoreCase(disposition) ||
+                    (disposition == null && bodyPart.getFileName() != null)) {
+                String fileName = MimeUtility.decodeText(bodyPart.getFileName());
+                String mimeType = bodyPart.getContentType().split(";")[0].trim();
+                try (InputStream inputStream = bodyPart.getInputStream()) {
+                    byte[] bytes = inputStream.readAllBytes();
+                    attachmentFiles.add(new FileDto(bytes, fileName, mimeType));
                 }
             }
+            // Обробка тексту (text/plain або text/html)
+            if (bodyPart.isMimeType("text/plain")) {
+                bodyContent.append(bodyPart.getContent().toString());
+            }
+            // Рекурсивна обробка вкладених MIME-частин
+            if (bodyPart.isMimeType("multipart/*")) {
+                extractAttachmentsAndBody((Multipart) bodyPart.getContent(), attachmentPaths, bodyContent);
+            }
         }
-        return attachmentNames;
+        attachmentPaths.addAll(attachmentService.downloadAttachments(attachmentFiles));
     }
-
 
 
 }

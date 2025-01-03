@@ -1,4 +1,4 @@
-package com.example.appmodule.controller.email;
+package com.example.appmodule.controller.email_account;
 
 import com.example.appmodule.config.AuthenticatedUser;
 import com.example.appmodule.controller.MainController;

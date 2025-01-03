@@ -8,6 +8,6 @@
     <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
   </padding>
   <Label text="Welcome" styleClass="header-label" />
-  <Button onAction="#toCreateUser" text="Create User" styleClass="action-button" />
+  <Button onAction="#toCreateUser" text="Sing up" styleClass="action-button" />
   <Button onAction="#toLoginUser" text="Login" styleClass="action-button" />
 </VBox>
